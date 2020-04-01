@@ -12,17 +12,17 @@ hashtags-getter
 #### Kolejność uruchamiania skryptów:
 domyslne wywolanie:
 ```sh
-python twitter2.py -1 -1 -1
+python main.py -1 -1 -1
 ```
 
 pobieranie nowych od znanego id:
 ```sh
-python twitter2.py -1 id -1
+python main.py -1 id -1
 ```
 
 pobieranie wczesniejszych od znanego id:
 ```sh
-python twitter2.py id -1 -1
+python main.py id -1 -1
 ```
 
 ### PREPARE MONGODB
