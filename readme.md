@@ -2,53 +2,53 @@
 
 hashtags-getter
 
-### W projekcie znajdują się foldery:
+### W projekcie znajdują się foldery i pliki:
 *  ```data```
    *  pliki JSON
-*  ```list_first```
-   *  informacje o last_id i first_id wykonanego przeszukiwania
+*  ```last_first.json```
+   *  informacje o last_id i first_id ostatnio wykonanego przeszukiwania
 
 
 #### Kolejność uruchamiania skryptów:
 domyslne wywolanie:
 ```sh
-python main.py -1 -1 -1
+    1) python test.py <start_id> <end_id> <time> <output_prefix> <query>
+==> 2) python test.py
 ```
 
-pobieranie nowych od znanego id:
-```sh
-python main.py -1 id -1
-```
 
-pobieranie wczesniejszych od znanego id:
-```sh
-python main.py id -1 -1
-```
+W trakcie działania programu pobierane są pliki i zapisywane są informcje o last_id i first_id. Wewnątrz programu jest lista składająca się z interesujących nas tagów.
+
 
 ### PREPARE MONGODB
+więcej informacji: https://docs.docker.com/install/
 
+Jeśli mongo-client nie jest zainstalowany to:
 ```sh
-docker pull mongo docker run -d -p 27017:27017 -v ~/data:/data/db mongo
+sudo apt-get install mongodb-clients 
 ```
+
+Uruchomienie dockera w CLI poprzez wywołanie polecenia:
+```sh
+docker pull mongo
+docker run -d -p 27017:27017 -v ~/data:/data/db mongo
+```
+
+~/data - to katalog, który musi istnieć
+
+
+Uruchomienie mongodb w CLI (POLECENIE WYKONYWANE ZA KAŻDYM RAZEM):
+```sh
+mongo
+```
+
 
 Jeśli wystąpi komunikat, że dany port jest używany to trzeba go zmienić lub "zwolnić" i powtórzyć wcześniejsze komendy:
 ```sh
 netstat -nlp | grep 27017 kill PID
 ```
 
-Sprawdzenie czy docker chodzi:
+Sprawdzenie czy docker działa:
 ```sh
 docker ps
 ```
-
-Jeśli mongo-client nie jest zainstalowany to:
-```sh
-sudo apt-get install mongodb-clients
-```
-
-Uruchomienie servera mongo:
-```sh
-mongo
-```
-
-jeśli jesteśmy zalogowani to działa
