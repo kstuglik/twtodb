@@ -8,7 +8,10 @@ from TwitterAPI import TwitterAPI
 import re
 import os
 
-api = TwitterAPI(YOUR_KEY)
+api = TwitterAPI("5l7mUZmFxS8VrSm1BqlkCGNJM",
+                 "Q4XpEkK8sbnNF68ue4DRVXElfqHXWu15DBov9izNeOjQ55lRT7",
+                 "1190551170076557312-dMYjta2WLhBmV5KEVd0PIbLvfUZAvN",
+                 "ij1fjd72cd84Rn4gdJe2AYCj3Jj9ZRYDFu29JtRSLIwSz")
 
 
 def prepare_request(query, since_id=None, max_id=None):
@@ -98,7 +101,10 @@ def update_last_first_id(new_content):
             for key, value in new_content.items():
                 if key not in update_dict.keys():
                     update_dict[key] = {}
-                update_dict[key] = value
+                if key == "first_id" and new_content[key] > prev_conent[key]:
+                    update_dict[key] = value
+                if key == "last_id" and new_content[key] < prev_conent[key]:
+                    update_dict[key] = value
             
             with open("last_first.json", 'w') as outfile:
                 json.dump(update_dict, outfile, indent=4)
