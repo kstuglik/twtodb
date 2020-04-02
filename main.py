@@ -8,10 +8,7 @@ from TwitterAPI import TwitterAPI
 import re
 import os
 
-api = TwitterAPI("5l7mUZmFxS8VrSm1BqlkCGNJM",
-                 "Q4XpEkK8sbnNF68ue4DRVXElfqHXWu15DBov9izNeOjQ55lRT7",
-                 "1190551170076557312-dMYjta2WLhBmV5KEVd0PIbLvfUZAvN",
-                 "ij1fjd72cd84Rn4gdJe2AYCj3Jj9ZRYDFu29JtRSLIwSz")
+api = TwitterAPI(YOUR_KEY)
 
 
 def prepare_request(query, since_id=None, max_id=None):
@@ -101,10 +98,10 @@ def update_last_first_id(new_content):
             for key, value in new_content.items():
                 if key not in update_dict.keys():
                     update_dict[key] = {}
-                if key == "first_id" and new_content[key] > prev_conent[key]:
-                    update_dict[key] = value
-                if key == "last_id" and new_content[key] < prev_conent[key]:
-                    update_dict[key] = value
+                if value["first_id"] > prev_conent[key]["first_id"]:
+                    update_dict[key]["first_id"] = value["first_id"]
+                if value["last_id"] < prev_conent[key]["last_id"]:
+                    update_dict[key]["last_id"] = value["last_id"]
             
             with open("last_first.json", 'w') as outfile:
                 json.dump(update_dict, outfile, indent=4)
@@ -130,21 +127,27 @@ if __name__ == "__main__":
         )
         sys.exit()
 
-    # start_id = setNoneIfMinusOne(sys.argv[1])
-    # end_id = setNoneIfMinusOne(sys.argv[2])
-    # time = setNoneIfMinusOne(sys.argv[3])
-    # output_prefix = sys.argv[4]
-    # query = sys.argv[5]
+    '''start_id = setNoneIfMinusOne(sys.argv[1])
+    end_id = setNoneIfMinusOne(sys.argv[2])
+    time = setNoneIfMinusOne(sys.argv[3])
+    output_prefix = sys.argv[4]
+    query = sys.argv[5]'''
 
     start_id = None
     end_id = None
     time = None
 
-    # komunikat przekroczenia limitu wykonywanych zapytan w oknie 15min ma nr: 429
-    # trzeba wprowadzic delay miedzy kolejnymi zapytaniami
-    # trzeba dodac obsluge informacji z last_first.id dla danego tagu, by działo się to automatycznie
+    '''komunikat przekroczenia limitu wykonywanych zapytan w oknie 15min ma nr: 429
+    trzeba wprowadzic delay miedzy kolejnymi zapytaniami
+    trzeba dodac obsluge informacji z last_first.id dla danego tagu, by dzialo sie to automatycznie'''
 
-    for query in hashtags[]:
+    with open("last_first.json") as json_file:
+        history = json.load(json_file)
+
+    for query in hashtags:
+
+        if query in history:
+            end_id = history[query]["first_id"]
 
         output_prefix = str(query.replace("#",""))
 
@@ -160,13 +163,11 @@ if __name__ == "__main__":
 
         tweets = get_tweets_from_api(query, since_id=end_id, max_id=start_id, h=time)
 
-        remove_ms = lambda x:re.sub("\+\d+\s","",x)# Use re to get rid of the milliseconds.
-        mk_dt = lambda x:datetime.strptime(remove_ms(x), "%a %b %d %H:%M:%S %Y")
-        my_form = lambda x:"{:%Y-%m-%d-%H-%M-%S}".format(mk_dt(x))# Format datetime object.
-        date_time = my_form(tweets[0]["created_at"])
-
-
         if len(tweets)>0:
+            remove_ms = lambda x:re.sub("\+\d+\s","",x)# Use re to get rid of the milliseconds.
+            mk_dt = lambda x:datetime.strptime(remove_ms(x), "%a %b %d %H:%M:%S %Y")
+            my_form = lambda x:"{:%Y-%m-%d-%H-%M-%S}".format(mk_dt(x))# Format datetime object.
+            date_time = my_form(tweets[0]["created_at"])
 
             with open("data/"+output_prefix + date_time + ".json", 'w') as outfile:
                 json.dump(tweets, outfile, indent = 4)
