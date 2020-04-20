@@ -8,22 +8,22 @@ from TwitterAPI import TwitterAPI
 import re
 import os
 
-api = TwitterAPI(YOUR_KEY)
+api = TwitterAPI("")
 
 
 def prepare_request(query, since_id=None, max_id=None):
-    req = dict()
-    req['tweet_mode'] = 'extended'
-    req['lang'] = 'pl'
-    req['count'] = 100    # max number
-    req['q'] = query
+    request = dict()
+    request['tweet_mode'] = 'extended'
+    request['lang'] = 'pl'
+    request['count'] = 100    # max number
+    request['q'] = query
 
     if max_id is not None:
-        req['max_id'] = max_id
+        request['max_id'] = max_id
     if since_id is not None:
-        req['since_id'] = since_id
+        request['since_id'] = since_id
 
-    return req
+    return request
 
 
 def get_tweets_from_api(query, since_id=None, max_id=None, h=None):
@@ -75,7 +75,7 @@ hashtags = [
     '#Duda2020',
     '#Holownia2020',
     '#Kidawa2020',
-    '#Kosiniakkamysz2020'
+    '#Kosiniak2020'
 ]
 
 
@@ -115,14 +115,11 @@ def update_last_first_id(new_content):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 6 and len(sys.argv) != 1:
+    if len(sys.argv) != 6 and len(sys.argv) != 2:
         print(
-            "Usage:\n\n\t1)\tpython "+str(sys.argv[0])+" <start_id> <end_id> <time> <output_prefix> <query>\n"+
-            "==>\t2)\tpython "+str(sys.argv[0])+"\n\n"+
-            "\t<start_id>\t--\tfirst fetched tweet id\n"+
-            "\t<end_id>\t--\tstop on fetching tweet id\n"+
-            "\t<time>\t\t--\tstop on tweet created at now - time hours\n\n"+
-            "-1 in fields: start_id, end_id, time is interpreted as None\n\n"+
+            "Usage:\tpython "+str(sys.argv[0])+" new/old\n"+
+            "\told - old tweets\n"+
+            "\tnew - new tweets\n"+
             "TRY AGAIN"
         )
         sys.exit()
@@ -146,8 +143,12 @@ if __name__ == "__main__":
 
     for query in hashtags:
 
-        if query in history:
-            end_id = history[query]["first_id"]
+        if len(sys.argv) == 2:
+            if query in history:
+                if sys.argv[1] == "old":
+                    start_id = history[query]["last_id"]
+                if sys.argv[1] == "new":
+                    end_id = history[query]["first_id"]
 
         output_prefix = str(query.replace("#",""))
 
