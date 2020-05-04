@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 #uruchamialem z python2
 from time import gmtime
 from datetime import datetime, timedelta
@@ -8,7 +11,10 @@ from TwitterAPI import TwitterAPI
 import re
 import os
 
-api = TwitterAPI("")
+api = TwitterAPI("5l7mUZmFxS8VrSm1BqlkCGNJM",
+"Q4XpEkK8sbnNF68ue4DRVXElfqHXWu15DBov9izNeOjQ55lRT7",
+"1190551170076557312-dMYjta2WLhBmV5KEVd0PIbLvfUZAvN",
+"ij1fjd72cd84Rn4gdJe2AYCj3Jj9ZRYDFu29JtRSLIwSz");
 
 
 def prepare_request(query, since_id=None, max_id=None):
@@ -75,7 +81,9 @@ hashtags = [
     '#Duda2020',
     '#Holownia2020',
     '#Kidawa2020',
-    '#Kosiniak2020'
+    '#Kosiniak2020',
+    '#WyboryKorespondencyjne',
+    '#wybory2020'
 ]
 
 

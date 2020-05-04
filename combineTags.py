@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
+
 import os
 import sys
 import json
@@ -10,7 +13,9 @@ hashtags = [
     'Duda2020',
     'Holownia2020',
     'Kidawa2020',
-    'Kosiniak2020'
+    'Kosiniak2020',
+    'WyboryKorespondencyjne',
+    'wybory2020'
 ]
 
 slownik = { i : {} for i in hashtags }
