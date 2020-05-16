@@ -40,6 +40,13 @@ def add_tweet(item, retweeted_me):
     result["tweet"]["user"] = user["id"]
     if retweet:
         result["tweet"]["retweeted_status"] = retweet["id"]
+    # if this is retweet, it may have quote status but not quoted_status field
+    if item["is_quote_status"] and "quoted_status" in item:
+        # there is already field quoted_status_id
+        quoted = item["quoted_status"].copy() 
+        result["tweet"]["quoted_status"] = None
+    else:
+        quoted = None
 
     # Add tweet to db
     try:
@@ -82,6 +89,9 @@ def add_tweet(item, retweeted_me):
     # if this is retweet add it
     if retweet:
         add_tweet(retweet, item)
+    # if it is qoute of another tweet, add quoted
+    if quoted:
+        add_tweet(quoted, quoted)
 
 
 def import_into_db(append, data_s):
