@@ -82,8 +82,10 @@ hashtags = [
     '#Holownia2020',
     '#Kidawa2020',
     '#Kosiniak2020',
-    '#WyboryKorespondencyjne',
-    '#wybory2020'
+    '#Trzaskowski2020',
+    '#Wybory',
+    '#Wybory2020',
+    '#WyboryKorespondencyjne'
 ]
 
 
