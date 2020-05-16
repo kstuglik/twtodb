@@ -106,7 +106,7 @@ def import_into_db(append, data_s):
         
         for item in data_s:
             # pass as self retweeted, it simplyfies add_tweet
-            add_tweet(data_s[item], data_s[item])
+            add_tweet(item, item)
             # because of structure of _all_* files (combinedTags.py)
             # it is necessary to use this code:
             # add_tweet(data_s[item], data_s[item])
