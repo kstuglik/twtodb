@@ -20,28 +20,33 @@ domyslne wywolanie:
 W trakcie działania programu pobierane są pliki i zapisywane są informcje o last_id i first_id. Wewnątrz programu jest lista składająca się z interesujących nas tagów.
 
 
-### PREPARE MONGODB
-więcej informacji: https://docs.docker.com/install/
+### PREPARE MONGODB (DOCKER SHOULD BE)
 
 Jeśli mongo-client nie jest zainstalowany to:
 ```sh
 sudo apt-get install mongodb-clients 
 ```
 
-Uruchomienie dockera w CLI poprzez wywołanie polecenia:
+Instalacja dockera: https://docs.docker.com/install/
+
+
 ```sh
 docker pull mongo
+```
+
+
+### RUN MONGODB
+Uruchomienie dockera w CLI poprzez wywołanie polecenia:
+```sh
 docker run -d -p 27017:27017 -v ~/data:/data/db mongo
 ```
 
 ~/data - to katalog, który musi istnieć
 
-
 Uruchomienie mongodb w CLI (POLECENIE WYKONYWANE ZA KAŻDYM RAZEM):
 ```sh
 mongo
 ```
-
 
 Jeśli wystąpi komunikat, że dany port jest używany to trzeba go zmienić lub "zwolnić" i powtórzyć wcześniejsze komendy:
 ```sh

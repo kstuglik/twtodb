@@ -11,11 +11,8 @@ from TwitterAPI import TwitterAPI
 import re
 import os
 
-api = TwitterAPI("5l7mUZmFxS8VrSm1BqlkCGNJM",
-"Q4XpEkK8sbnNF68ue4DRVXElfqHXWu15DBov9izNeOjQ55lRT7",
-"1190551170076557312-dMYjta2WLhBmV5KEVd0PIbLvfUZAvN",
-"ij1fjd72cd84Rn4gdJe2AYCj3Jj9ZRYDFu29JtRSLIwSz");
-
+from settings import *
+api = TwitterAPI(key)
 
 def prepare_request(query, since_id=None, max_id=None):
     request = dict()
@@ -71,22 +68,6 @@ def setNoneIfMinusOne(arg):
         return None
     else:
         return int(arg)
-
-
-hashtags = [
-    '#WyboryPrezydenckie2020',
-    '#wyboryprezydenckie',
-    '#Biedron2020',
-    '#Bosak2020',
-    '#Duda2020',
-    '#Holownia2020',
-    '#Kidawa2020',
-    '#Kosiniak2020',
-    '#Trzaskowski2020',
-    '#Wybory',
-    '#Wybory2020',
-    '#WyboryKorespondencyjne'
-]
 
 
 def update_last_first_id(new_content):

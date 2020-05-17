@@ -16,6 +16,9 @@ db = client["tfits"]
 collection = db[ "tfits" ]
 users = db[ "users" ]
 
+
+# SEARCH BY: user_id, tweet_id, hashtag
+
 """Get user by id."""
 def get_user_by_id(id_num):
     try:
@@ -32,8 +35,17 @@ def get_tweet_by_id(id_num):
         return None
 
 
+"""Find tweets with hashtag."""
+def find_tweets_with_hashtag(hashtag):
+    regex = re.compile("^" + hashtag + "$", re.IGNORECASE)
+
+    return collection.find({"tweet.entities.hashtags.text": regex})
+
+
+# SEARCH IN TWEETS: author, if retweeted, number of tweets, number of tweets+retweets
+
 """Get user who posted tweet from users database."""
-def get_titter_user(tweet):
+def get_twitter_user(tweet):
     return get_user_by_id(tweet["tweet"]["user"])
 
 
@@ -52,10 +64,14 @@ def count_tweets():
                                   {"$group": { "_id": None, "count": {"$sum":1}}}
                                  ]).next()["count"]
 
+
 """Count all tweets (include retweets)."""
 def count_all_tweets():
      return collection.aggregate([{"$group": { "_id": None, "count": {"$sum":1}}}
                                  ]).next()["count"]
+
+
+# USER-associated TWEETS: without retweets, with retweets, tweets+retweets
 
 """Orginal tweets per user (exclude retweets)."""
 def tweets_per_user():
@@ -81,11 +97,4 @@ def retweets_per_user():
                                               "count": {"$sum":"$tweet.retweet_count"}}},
                                  {"$sort":{"count": -1}}
                                 ])
-
-
-"""Find tweets with hashtag."""
-def find_tweets_with_hashtag(hashtag):
-    regex = re.compile("^" + hashtag + "$", re.IGNORECASE)
-
-    return collection.find({"tweet.entities.hashtags.text": regex})
 
