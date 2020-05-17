@@ -26,7 +26,7 @@ def get_summary_hashtag_number():
         print(
             item.ljust(20, ' ')+"\t"+
             str(ile).ljust(20, ' ')
-        ))
+        )
 
 
 def get_user_by_id_from_list(lista,user_id):
