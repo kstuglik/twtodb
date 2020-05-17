@@ -13,10 +13,12 @@ hashtags = [
     'Duda2020',
     'Holownia2020',
     'Kidawa2020',
+    'Trzaskowski2020',
     'Kosiniak2020',
     'WyboryKorespondencyjne',
     'wybory2020'
 ]
+
 
 slownik = { i : {} for i in hashtags }
 lista = os.listdir("data")

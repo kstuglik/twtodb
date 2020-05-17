@@ -1,5 +1,8 @@
-#uruchamialem z python3
-#
+#execute: 
+#   python3 intodb.py append data/*
+#               or
+#   python3 intodb.py "append+folder" data
+
 from pymongo import MongoClient
 from pprint import pprint
 import pymongo
@@ -7,6 +10,7 @@ import datetime
 import json
 import pymongo
 import sys
+import os
 
 mongoDBUrlLocalHost = "mongodb://127.0.0.1:27017"
 client = MongoClient(mongoDBUrlLocalHost)
@@ -143,9 +147,19 @@ if __name__ == "__main__":
         append = True
         files = sys.argv[2:]
 
+    if sys.argv[1] == "append+folder":
+        append = True
+        folder = sys.argv[2]
+        files = os.listdir(folder)
+        files = [folder + "/" + f for f in files] 
+
     for f in files:
-        print("Inserting tweets from: ", f)
-        with open(f) as data_file:
-            data = json.load(data_file)
-        import_into_db(append, data)
-    
+        try:
+            print("Load tweets from: ", f)
+            with open(f) as data_file:
+                data = json.load(data_file)
+            import_into_db(append, data)
+
+        except Exception as e:
+            print("["+f+"] Exception: %s"%e)
+
