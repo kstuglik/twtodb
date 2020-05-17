@@ -26,8 +26,7 @@ def get_summary_hashtag_number():
         print(
             item.ljust(20, ' ')+"\t"+
             str(ile).ljust(20, ' ')
-        )
-    print("ALL TWEETS: %d"%all_items)
+        ))
 
 
 def get_user_by_id_from_list(lista,user_id):
@@ -72,7 +71,7 @@ def get_user_summary(lista1,lista2,lista3,top_n):
 
 def get_summary_all_tweets():
     print("TWEETS without RETWEETS:\t%d"%(count_tweets()))
-    print("TWEETS without RETWEETS:\t%d"%(count_all_tweets()))
+    print("TWEETS with RETWEETS:\t%d"%(count_all_tweets()))
 
 
 if __name__ == "__main__":
