@@ -20,7 +20,7 @@ domyslne wywolanie:
 W trakcie działania programu pobierane są pliki i zapisywane są informcje o last_id i first_id. Wewnątrz programu jest lista składająca się z interesujących nas tagów.
 
 
-### PREPARE MONGODB (DOCKER SHOULD BE)
+### PREPARE MONGODB (DOCKER SHOULD BE AVAILABLE)
 
 Jeśli mongo-client nie jest zainstalowany to:
 ```sh
@@ -35,7 +35,7 @@ docker pull mongo
 ```
 
 
-### RUN MONGODB
+### RUN MONGODB (EVERYTIME)
 Uruchomienie dockera w CLI poprzez wywołanie polecenia:
 ```sh
 docker run -d -p 27017:27017 -v ~/data:/data/db mongo
@@ -50,10 +50,18 @@ mongo
 
 Jeśli wystąpi komunikat, że dany port jest używany to trzeba go zmienić lub "zwolnić" i powtórzyć wcześniejsze komendy:
 ```sh
-netstat -nlp | grep 27017 kill PID
+netstat -nlp | grep 27017 
+kill PID
 ```
 
 Sprawdzenie czy docker działa:
 ```sh
 docker ps
+```
+
+
+Jeżeli wkurza Cie docker i najprostrze wydaje sie jego ponowne zainstalowanie to:
+```sh
+https://docs.docker.com/engine/install/ubuntu/
+
 ```
