@@ -105,3 +105,12 @@ def get_tags_used_by_user(user_id):
                                         "count": {"$sum":1}}},
                                         {"$sort":{"count": -1}} 
                                 ])
+
+
+def get_all_users_count():
+    d = users.aggregate([{"$group": {"_id": None, "count": {"$sum":1}}}]).next()
+    return d["count"]
+
+def get_all_tweets_count():
+    d = collection.aggregate([{"$group": {"_id": None, "count": {"$sum":1}}}]).next()
+    return d["count"]

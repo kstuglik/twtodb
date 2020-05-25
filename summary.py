@@ -197,7 +197,7 @@ def create_xls_summary_htags_by_day():
         f.write(htag+";")
     f.write("\n")
 
-    for key,value in slownik.items():
+    for key,value in sorted(slownik.items()):
         if key > "2020-03-30":
             f.write(key+";")
             for htag in hashtags:
@@ -285,16 +285,19 @@ def get_summary_basic():
         str(round(  all_retweeted/all_tweet*100,2))
     )
 
+    print("ALL USERS: "+str(get_all_users_count()))
+    print("ALL TWEETS: "+ str(get_all_tweets_count()))
+
 
 if __name__ == "__main__":
 
     # get_summary_basic()
     # get_summary_advanced()
 
-    get_summary_user_tweets_number(10)
+    # get_summary_user_tweets_number(10)
 
     # pprint(get_summary_htags_by_day())
-    # create_xls_summary_htags_by_day()
+    create_xls_summary_htags_by_day()
 
     #STANDARDOWE WYWOŁANIA
     # print(count_tweets())
