@@ -115,6 +115,8 @@ if __name__ == "__main__":
         )
         sys.exit()
 
+    hashtags = ['#' + h for h in hashtags]
+
     '''start_id = setNoneIfMinusOne(sys.argv[1])
     end_id = setNoneIfMinusOne(sys.argv[2])
     time = setNoneIfMinusOne(sys.argv[3])
