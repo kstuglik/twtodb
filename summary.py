@@ -24,8 +24,17 @@ def get_summary_user_tweets_number(top_n):
     lista2 = list(all_tweets_per_user())
     lista3 = list(retweets_per_user())
 
+    lista4 = [] # lista id najbardziej aktywnych użytkowników(z oryginalnymi tweetami)
+
     print("\n"+"UŻYTKOWNICY Z NAJWIEKSZA ILOSCIA ORYGINALNYCH TWEETOW".center(100,"=") + "\n")
     counter = top_n
+
+    print(
+        ("user_name").ljust(50, " ")+
+        ("orginal_tweets: ").ljust(20, " ")+
+        ("all_tweets:").ljust(20, " ")+
+        ("how_often_retweeted:").ljust(20, " ")
+    )
 
     for item in lista1:
         if counter > 0 and item["count"] > 5:
@@ -34,17 +43,25 @@ def get_summary_user_tweets_number(top_n):
 
             user = get_user_by_id(item["_id"])
             print(
-                "".center(100,"*") + "\n" +
-                user["user"]["name"] +"\n"+
-                "orginal_tweets:\t" +    str(item["count"]).ljust(20, " ")+"\t"+
-                "all_tweets:\t"     +   str(lista2_temp).ljust(20, " ")+"\t"+
-                "how_often_retweeted:\t"    +   str(lista3_temp).ljust(20, " ")
+                (user["user"]["name"]).ljust(50, " ")+
+                str(item["count"]).ljust(20, " ")+"\t"+
+                str(lista2_temp).ljust(20, " ")+"\t"+
+                str(lista3_temp).ljust(20, " ")
             )
             counter -= 1
+            lista4.append(item["_id"])
 
 
-    print("\n"+"UŻYTKOWNICY NAJCZESCIEJ RETWEETOWANI".center(100,"=") + "\n")
+    print("\n"+"UŻYTKOWNICY NAJCZESCIEJ RETWEETOWANI".center(110,"=") + "\n")
     counter = top_n
+
+    print(
+        ("user_name").ljust(50, " ")+
+        ("how_often_retweeted:").ljust(20, " ")+
+        ("all_tweets:").ljust(20, " ")+
+        ("orginal_tweets: ").ljust(20, " ")
+    )
+
     for item in lista3:
         if counter > 0 and item["count"] > 5:
             count_from_lista1 = get_user_count_from_list(lista1,item["_id"])
@@ -52,14 +69,34 @@ def get_summary_user_tweets_number(top_n):
             if count_from_lista2 > 4:
                 user = get_user_by_id(item["_id"])
                 print(
-                    "".center(100,"*") + "\n" +
-                    user["user"]["name"] +"\n"+
-                    "how_often_retweeted:\t"+str(item["count"]).ljust(20, " ")+"\t"+
-                    "all_tweets:\t"+str(count_from_lista2).ljust(20, " ")+"\t"+
-                    "orginal_tweets:\t" +str(count_from_lista1).ljust(20, " ") +"\n"
+                    (user["user"]["name"]).ljust(50, " ")+
+                    str(item["count"]).ljust(20, " ")+"\t"+
+                    str(count_from_lista2).ljust(20, " ")+"\t"+
+                    str(count_from_lista1).ljust(20, " ") +"\n"
                 )
 
                 counter -= 1
+
+
+    print("\n"+"UŻYTKOWNICY NAJCZESCIEJ RETWEETOWANI - SZCZEGÓŁY".center(140,"=") + "\n")
+    print(
+        ("user_name").ljust(40, " ")+
+        ("followers_count: ").ljust(20, " ")+
+        ("friends_count:").ljust(20, " ")+
+        ("listed_count:").ljust(20, " ")+
+        ("favourites_count:").ljust(20, " ")+
+        ("statuses_count:").ljust(20, " ")+ "\n"
+    )
+    for user_id in lista4:
+        item = get_user_by_id(user_id)
+        print(
+            item["user"]["name"].ljust(40, " ")+
+            str(item["user"]["followers_count"]).ljust(20, " ")+
+            str(item["user"]["friends_count"]).ljust(20, " ")+
+            str(item["user"]["listed_count"]).ljust(20, " ")+
+            str(item["user"]["favourites_count"]).ljust(20, " ")+
+            str(item["user"]["statuses_count"]).ljust(20, " ")
+        )
 
 
 def get_summary_tweets_by_hashtags():
@@ -230,7 +267,7 @@ if __name__ == "__main__":
     # get_summary_basic()
     # get_summary_advanced()
 
-    get_summary_user_tweets_number(5)
+    get_summary_user_tweets_number(10)
 
     # pprint(get_summary_htags_by_day())
     # create_xls_summary_htags_by_day()
