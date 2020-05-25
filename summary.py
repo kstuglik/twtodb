@@ -170,7 +170,7 @@ def get_summary_htags_by_day():
 
         if htag == "Holownia2020":
             sprawdzam = list(find_tweets_with_hashtag("Holownia2020|Hołownia2020"))
-        if htag == "Biedron2020":
+        elif htag == "Biedron2020":
             sprawdzam = list(find_tweets_with_hashtag("Biedron2020|Biedroń2020"))
         else:
             sprawdzam = list(find_tweets_with_hashtag(htag))
@@ -291,13 +291,13 @@ def get_summary_basic():
 
 if __name__ == "__main__":
 
-    # get_summary_basic()
-    # get_summary_advanced()
+    get_summary_basic()
+    get_summary_advanced()
 
-    # get_summary_user_tweets_number(10)
+    get_summary_user_tweets_number(10)
 
     # pprint(get_summary_htags_by_day())
-    create_xls_summary_htags_by_day()
+    # create_xls_summary_htags_by_day()
 
     #STANDARDOWE WYWOŁANIA
     # print(count_tweets())
