@@ -3,6 +3,7 @@ from settings import *  #z pliku settings brane są nazwy-hashtagi
 import inspect
 import time
 from datetime import datetime
+import operator
 
 
 def get_var_name(var):
@@ -30,10 +31,10 @@ def get_summary_user_tweets_number(top_n):
     counter = top_n
 
     print(
-        ("user_name").ljust(50, " ")+
+        ("user_name").ljust(40, " ")+
         ("orginal_tweets: ").ljust(20, " ")+
         ("all_tweets:").ljust(20, " ")+
-        ("how_often_retweeted:").ljust(20, " ")
+        ("how_often_retweeted:").ljust(20, " ")+"\n"
     )
 
     for item in lista1:
@@ -43,7 +44,7 @@ def get_summary_user_tweets_number(top_n):
 
             user = get_user_by_id(item["_id"])
             print(
-                (user["user"]["name"]).ljust(50, " ")+
+                (user["user"]["name"]).ljust(40, " ")+
                 str(item["count"]).ljust(20, " ")+"\t"+
                 str(lista2_temp).ljust(20, " ")+"\t"+
                 str(lista3_temp).ljust(20, " ")
@@ -56,10 +57,10 @@ def get_summary_user_tweets_number(top_n):
     counter = top_n
 
     print(
-        ("user_name").ljust(50, " ")+
-        ("how_often_retweeted:").ljust(20, " ")+
+        ("user_name").ljust(40, " ")+
+        ("how_often_retweeted:").ljust(30, " ")+
         ("all_tweets:").ljust(20, " ")+
-        ("orginal_tweets: ").ljust(20, " ")
+        ("orginal_tweets: ").ljust(20, " ")+"\n"
     )
 
     for item in lista3:
@@ -69,14 +70,16 @@ def get_summary_user_tweets_number(top_n):
             if count_from_lista2 > 4:
                 user = get_user_by_id(item["_id"])
                 print(
-                    (user["user"]["name"]).ljust(50, " ")+
-                    str(item["count"]).ljust(20, " ")+"\t"+
+                    (user["user"]["name"]).ljust(40, " ")+
+                    str(item["count"]).ljust(30, " ")+"\t"+
                     str(count_from_lista2).ljust(20, " ")+"\t"+
-                    str(count_from_lista1).ljust(20, " ") +"\n"
+                    str(count_from_lista1).ljust(20, " ")
                 )
 
                 counter -= 1
 
+
+    d = {} 
 
     print("\n"+"UŻYTKOWNICY NAJCZESCIEJ RETWEETOWANI - SZCZEGÓŁY".center(140,"=") + "\n")
     print(
@@ -88,7 +91,10 @@ def get_summary_user_tweets_number(top_n):
         ("statuses_count:").ljust(20, " ")+ "\n"
     )
     for user_id in lista4:
+
         item = get_user_by_id(user_id)
+        d[user_id] = {"name":item["user"]["name"],"suma":0}
+
         print(
             item["user"]["name"].ljust(40, " ")+
             str(item["user"]["followers_count"]).ljust(20, " ")+
@@ -98,6 +104,24 @@ def get_summary_user_tweets_number(top_n):
             str(item["user"]["statuses_count"]).ljust(20, " ")
         )
 
+        l = get_tags_used_by_user(user_id)
+        suma = {} 
+        for group in l: 
+            for h in group["_id"]: 
+                h = h.lower() 
+                if h in suma: 
+                    suma[h] += group["count"] 
+                else: 
+                    suma[h] = group["count"] 
+        d[user_id]["suma"] = suma                                                                                                                             
+
+    
+    i = 1
+    for k,v in d.items():
+        print(str(i)+") "+(v["name"]).center(50, "*"))
+        pprint(sorted(v["suma"].items(), key=operator.itemgetter(-1),reverse=True)[0:10])
+        i += 1
+        
 
 def get_summary_tweets_by_hashtags():
     dict_sum_htags = {}

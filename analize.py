@@ -98,3 +98,10 @@ def retweets_per_user():
                                  {"$sort":{"count": -1}}
                                 ])
 
+""" GET TAGS USED BY USER WITH USER_ID"""
+def get_tags_used_by_user(user_id):
+    return collection.aggregate([{"$match": {"tweet.user": user_id, "retweet": False}}, 
+                                {"$group": { "_id": "$tweet.entities.hashtags.text", 
+                                        "count": {"$sum":1}}},
+                                        {"$sort":{"count": -1}} 
+                                ])
