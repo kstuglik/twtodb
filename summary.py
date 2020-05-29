@@ -141,7 +141,7 @@ def get_summary_tweets_by_hashtags():
         temp_retweet = 0
 
         for item in sprawdzam:
-            if item["retweet"] == False:
+            if item["retweet"]:
                 temp_retweet += 1
             else:
                 temp_original += 1
