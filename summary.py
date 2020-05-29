@@ -132,7 +132,7 @@ def get_summary_tweets_by_hashtags():
 
         if htag == "Holownia2020":
             sprawdzam = list(find_tweets_with_hashtag("Holownia2020|Hołownia2020"))
-        if htag == "Biedron2020":
+        elif htag == "Biedron2020":
             sprawdzam = list(find_tweets_with_hashtag("Biedron2020|Biedroń2020"))
         else:
             sprawdzam = list(find_tweets_with_hashtag(htag))
