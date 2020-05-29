@@ -36,9 +36,23 @@ def add_tweet(item, retweeted_me):
         retweet = item["retweeted_status"].copy()
     else:
         retweet = None
+    
+    hashtags = {}
+    # Add hashtags in tweet
+    for h in item["entities"]["hashtags"]:
+        # Make hashtags lowercase
+        hashtags[h["text"].lower()] = 1
+
+    if retweet:
+        # Add hashtags from orginal tweet
+        for h in retweet["entities"]["hashtags"]:
+            # Make hashtags lowercase
+            hashtags[h["text"].lower()] = 1
+
     result = {"_id": item["id"],
             "tweet":item,
-            "retweet": True if retweet else False}
+            "retweet": True if retweet else False,
+            "hashtags": list(hashtags)}
     user = item["user"].copy()
     # leave only user id
     result["tweet"]["user"] = user["id"]
