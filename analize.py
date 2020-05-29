@@ -39,7 +39,7 @@ def get_tweet_by_id(id_num):
 def find_tweets_with_hashtag(hashtag):
     regex = re.compile("^" + hashtag + "$", re.IGNORECASE)
 
-    return collection.find({"tweet.entities.hashtags.text": regex})
+    return collection.find({"hashtags": regex})
 
 
 # SEARCH IN TWEETS: author, if retweeted, number of tweets, number of tweets+retweets
@@ -101,7 +101,7 @@ def retweets_per_user():
 """ GET TAGS USED BY USER WITH USER_ID"""
 def get_tags_used_by_user(user_id):
     return collection.aggregate([{"$match": {"tweet.user": user_id, "retweet": False}}, 
-                                {"$group": { "_id": "$tweet.entities.hashtags.text", 
+                                {"$group": { "_id": "$hashtags", 
                                         "count": {"$sum":1}}},
                                         {"$sort":{"count": -1}} 
                                 ])
