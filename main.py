@@ -22,9 +22,9 @@ def prepare_request(query, since_id=None, max_id=None):
     request['q'] = query
 
     if max_id is not None:
-        request['max_id'] = max_id
+        request['max_id'] = max_id # start_id
     if since_id is not None:
-        request['since_id'] = since_id
+        request['since_id'] = since_id # end_id
 
     return request
 
@@ -139,9 +139,9 @@ if __name__ == "__main__":
         if len(sys.argv) == 2:
             if query in history:
                 if sys.argv[1] == "old":
-                    start_id = history[query]["last_id"]
+                    start_id = history[query.lower()]["last_id"]
                 if sys.argv[1] == "new":
-                    end_id = history[query]["first_id"]
+                    end_id = history[query.lower()]["first_id"]
 
         output_prefix = str(query.replace("#",""))
 
@@ -167,6 +167,6 @@ if __name__ == "__main__":
                 json.dump(tweets, outfile, indent = 4)
  
             content = {}
-            content[query] = {"last_id": tweets[-1]['id'], "first_id": tweets[0]['id']}
+            content[query.lower()] = {"last_id": tweets[-1]['id'], "first_id": tweets[0]['id']}
 
             update_last_first_id(content)

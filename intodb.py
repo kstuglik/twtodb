@@ -161,12 +161,6 @@ if __name__ == "__main__":
         append = True
         files = sys.argv[2:]
 
-    if sys.argv[1] == "append+folder":
-        append = True
-        folder = sys.argv[2]
-        files = os.listdir(folder)
-        files = [folder + "/" + f for f in files] 
-
     for f in files:
         try:
             print("Load tweets from: ", f)

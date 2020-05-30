@@ -1,6 +1,6 @@
 hashtags = [
     'WyboryPrezydenckie2020',
-    'wyboryprezydenckie',
+    'WyboryPrezydenckie',
     'Biedron2020',
     'Bosak2020',
     'Duda2020',
