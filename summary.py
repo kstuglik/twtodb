@@ -4,7 +4,8 @@ import inspect
 import time
 from datetime import datetime
 import operator
-
+import matplotlib.pyplot as plt
+import matplotlib
 
 def get_var_name(var):
     for fi in reversed(inspect.stack()):
@@ -289,12 +290,91 @@ def get_summary_basic():
     print("ALL TWEETS: "+ str(get_all_tweets_count()))
 
 
+def pair_hashtag_matrix():
+    cross_arr = {}
+    for h in hashtags:
+        cross_arr[h] = {}
+        cross_arr[h][h] = find_tweets_with_hashtag(h, count=True)
+
+    for i in range(len(hashtags)):
+        h1 = hashtags[i]
+        for h2 in hashtags[i+1:]:
+            c = find_tweets_with_multiple_hashtags([h1, h2],
+                                                   count=True)
+            cross_arr[h1][h2] = c
+            cross_arr[h2][h1] = c
+
+    return cross_arr
+
+
+def plot_hashtag_matrix(pair_matrix, hashtags_list, percent=False,
+                        logscale=True, out_file=None):
+    hlen = len(hashtags_list)
+    a = [[0] * hlen for i in range(hlen)]
+    for h1, i, h2, j in ((h1, i, h2, j)
+            for i, h1 in enumerate(hashtags_list)
+            for j, h2 in enumerate(hashtags_list)):
+        a[i][j] = pair_matrix[h1][h2]
+    if percent:
+        for i in range(hlen):
+            for j in range(hlen):
+                if j != i:
+                    a[i][j] /= a[i][i] * 0.01
+            a[i][i] = 100
+        title = "Liczba tweetów z hashtagami XY / liczba tweetów z hashtagiem Y * 100%"
+    else:
+        title = "Liczba tweetów z hashtagami X i Y"
+
+    fig = plt.figure(figsize=(10,10))
+    plt.clf()
+    ax = fig.add_subplot(111)
+    ax.set_aspect(1)
+    if logscale:
+        res = ax.imshow(a, cmap=plt.cm.jet, interpolation='nearest',
+                        norm =matplotlib.colors.LogNorm())
+    else:
+        res = ax.imshow(a, cmap=plt.cm.jet, interpolation='nearest')
+
+    for x in range(hlen):
+        for y in range(hlen):
+            ax.annotate(str(round(a[x][y], 1)), xy=(y,x),
+                    horizontalalignment='center',
+                    verticalalignment='center')
+
+    cb = fig.colorbar(res)
+    plt.xticks(range(hlen), hashtags_list, rotation='vertical')
+    plt.yticks(range(hlen), hashtags_list)
+    plt.title(title)
+    plt.xlabel("hashtag X")
+    plt.ylabel("hashtag Y")
+    plt.tight_layout()
+    if out_file:
+        #save to the file
+        plt.savefig(out_file, format='png')
+    else:
+        #if there is no output file print plot to the screen
+        plt.show()
+
+
 if __name__ == "__main__":
 
-    get_summary_basic()
-    get_summary_advanced()
+    cr_arr = pair_hashtag_matrix()
+    plot_hashtag_matrix(cr_arr, hashtags,
+            out_file="../htag_matrix_count.png")
+    plot_hashtag_matrix(cr_arr, hashtags, percent=True,
+            out_file="../htag_matrix_percent.png")
+    # If hashtags list change, update this
+    candidats = hashtags[2:9]
+    plot_hashtag_matrix(cr_arr, candidats, percent=True,
+            out_file="../htag_matrix_percent_candidats.png")
 
-    get_summary_user_tweets_number(10)
+    # show interactive plot
+    plot_hashtag_matrix(cr_arr, hashtags, percent=True)
+
+    #get_summary_basic()
+    #get_summary_advanced()
+
+    #get_summary_user_tweets_number(10)
 
     # pprint(get_summary_htags_by_day())
     # create_xls_summary_htags_by_day()
@@ -316,4 +396,5 @@ if __name__ == "__main__":
 
     # for rt_user in retweets_per_user():
     #     print(rt_user["_id"])
+    pass
 

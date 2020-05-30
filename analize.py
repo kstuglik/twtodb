@@ -36,11 +36,30 @@ def get_tweet_by_id(id_num):
 
 
 """Find tweets with hashtag."""
-def find_tweets_with_hashtag(hashtag):
+def find_tweets_with_hashtag(hashtag, count=False):
     regex = re.compile("^" + hashtag + "$", re.IGNORECASE)
 
-    return collection.find({"hashtags": regex})
+    q = {"hashtags": regex}
 
+    if count:
+        return collection.count_documents(q)
+
+    return collection.find(q)
+
+
+"""Find tweets containing multiple hashtags from list."""
+def find_tweets_with_multiple_hashtags(hashtags_list, count=False):
+    regex_list = []
+    for h in hashtags_list:
+        regex = re.compile("^" + h + "$", re.IGNORECASE)
+        regex_list.append(regex)
+
+    q = {"hashtags": {"$all": regex_list}}
+
+    if count:
+        return collection.count_documents(q)
+
+    return collection.find(q)
 
 # SEARCH IN TWEETS: author, if retweeted, number of tweets, number of tweets+retweets
 
