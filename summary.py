@@ -6,6 +6,17 @@ from datetime import datetime
 import operator
 import matplotlib.pyplot as plt
 import matplotlib
+import argparse
+
+
+def fix_hashtag_for_regex(h):
+    if h == "Holownia2020":
+        return "Holownia2020|Hołownia2020"
+    elif h == "Biedron2020":
+        return "Biedron2020|Biedroń2020"
+    else:
+        return h
+
 
 def get_var_name(var):
     for fi in reversed(inspect.stack()):
@@ -131,12 +142,7 @@ def get_summary_tweets_by_hashtags():
         if htag not in dict_sum_htags:
             dict_sum_htags[htag] = {}
 
-        if htag == "Holownia2020":
-            sprawdzam = list(find_tweets_with_hashtag("Holownia2020|Hołownia2020"))
-        elif htag == "Biedron2020":
-            sprawdzam = list(find_tweets_with_hashtag("Biedron2020|Biedroń2020"))
-        else:
-            sprawdzam = list(find_tweets_with_hashtag(htag))
+        sprawdzam = list(find_tweets_with_hashtag(fix_hashtag_for_regex(htag)))
 
         temp_original = 0
         temp_retweet = 0
@@ -169,12 +175,7 @@ def get_summary_htags_by_day():
     for htag in hashtags:
         print("get_summary_htags_by_day for: #"+str(htag))
 
-        if htag == "Holownia2020":
-            sprawdzam = list(find_tweets_with_hashtag("Holownia2020|Hołownia2020"))
-        elif htag == "Biedron2020":
-            sprawdzam = list(find_tweets_with_hashtag("Biedron2020|Biedroń2020"))
-        else:
-            sprawdzam = list(find_tweets_with_hashtag(htag))
+        sprawdzam = list(find_tweets_with_hashtag(fix_hashtag_for_regex(htag)))
 
         for item in sprawdzam:
 
@@ -190,9 +191,9 @@ def get_summary_htags_by_day():
     return slownik_aktywnosci_dziennej
 
 
-def create_xls_summary_htags_by_day():
+def create_xls_summary_htags_by_day(output_file="test.csv"):
     slownik = get_summary_htags_by_day()
-    f = open("test.csv", "a")
+    f = open(output_file, "a")
     f.write("DATE;")
     for htag in hashtags:
         f.write(htag+";")
@@ -294,13 +295,18 @@ def pair_hashtag_matrix():
     cross_arr = {}
     for h in hashtags:
         cross_arr[h] = {}
-        cross_arr[h][h] = find_tweets_with_hashtag(h, count=True)
+        print("Counting tweets with hashtag " + h)
+        cross_arr[h][h] = find_tweets_with_hashtag(
+                            fix_hashtag_for_regex(h), count=True)
 
     for i in range(len(hashtags)):
         h1 = hashtags[i]
         for h2 in hashtags[i+1:]:
-            c = find_tweets_with_multiple_hashtags([h1, h2],
-                                                   count=True)
+            print("Counting tweets with hashtags " + h1 + " " + h2)
+            c = find_tweets_with_multiple_hashtags(
+                    [fix_hashtag_for_regex(h1),
+                     fix_hashtag_for_regex(h2)],
+                    count=True)
             cross_arr[h1][h2] = c
             cross_arr[h2][h1] = c
 
@@ -356,28 +362,83 @@ def plot_hashtag_matrix(pair_matrix, hashtags_list, percent=False,
         plt.show()
 
 
+"""This is only to print nicer help."""
+class ArgumentDefaultsAndConstHelpFormatter(argparse.HelpFormatter):
+
+    def _get_help_string(self, action):
+        help = action.help
+        if '%(default)' not in action.help:
+            if action.default is not argparse.SUPPRESS:
+                defaulting_nargs = [argparse.OPTIONAL, argparse.ZERO_OR_MORE]
+                if action.option_strings or action.nargs in defaulting_nargs:
+                    help += ' (default: %(default)s)'
+                if action.const and action.nargs:
+                    help += ' (default if flag without arg: %(const)s)'
+        return help
+
+
 if __name__ == "__main__":
 
-    cr_arr = pair_hashtag_matrix()
-    plot_hashtag_matrix(cr_arr, hashtags,
-            out_file="../htag_matrix_count.png")
-    plot_hashtag_matrix(cr_arr, hashtags, percent=True,
-            out_file="../htag_matrix_percent.png")
-    # If hashtags list change, update this
-    candidats = hashtags[2:9]
-    plot_hashtag_matrix(cr_arr, candidats, percent=True,
-            out_file="../htag_matrix_percent_candidats.png")
+    parser = argparse.ArgumentParser(
+            description='Module for generating summary from tweets database.',
+            formatter_class=ArgumentDefaultsAndConstHelpFormatter)
 
-    # show interactive plot
-    plot_hashtag_matrix(cr_arr, hashtags, percent=True)
+    parser.add_argument('-b', '--basic', action='store_true',
+            help='Basic summary')
+    parser.add_argument('-a', '--advanced', action='store_true',
+            help='Advanced summary')
+    parser.add_argument('-x', '--xls', nargs='?', const='test.csv',
+            default=None, help='Generate number of tweets with hashtag per day in csv format')
+    parser.add_argument('-u', '--users-tweets', nargs='?',
+            const=10, default=None, type=int,
+            help='Summary of most [users-tweets] active users')
+    parser.add_argument('-d', '--htags-by-day', action='store_true',
+            help='Print numer of tweets with hashtag per day')
+    parser.add_argument('-m', '--matrix-count', nargs='?',
+            const='../htag_matrix_count.png', default=None,
+            help='Generate matrix plot of count of tweets with hashtags pairs. Results saved to file.')
+    parser.add_argument('-p', '--matrix-percent', nargs='?',
+            const='../htag_matrix_percent.png', default=None,
+            help='Generate matrix plot of percent of tweets with hashtags pair compered to tweets of only one hashtag. Resault saved to file.')
+    parser.add_argument('-c', '--matrix-candidats', nargs='?',
+            const='../htag_matrix_percent_candidats.png', default=None,
+            help='Generate matrix plot of percent of tweets with hashtags pair compered to tweets of only one hashtag. Only candidats hashtag is used (Duda2020, Bosak2020, etc.). Resault saved to file.')
+    parser.add_argument('-i', '--interactive-matrix', action='store_true',
+            help='Show generated plots in interactive mode.')
 
-    #get_summary_basic()
-    #get_summary_advanced()
+    args = parser.parse_args()
 
-    #get_summary_user_tweets_number(10)
+    if args.basic:
+        get_summary_basic()
+    if args.advanced:
+        get_summary_advanced()
+    
+    if args.users_tweets:
+        get_summary_user_tweets_number(args.users_tweets)
 
-    # pprint(get_summary_htags_by_day())
-    # create_xls_summary_htags_by_day()
+    if args.htags_by_day:
+        pprint(get_summary_htags_by_day())
+    if args.xls:
+        create_xls_summary_htags_by_day(args.xls)
+    
+    if args.matrix_percent or args.matrix_count or args.matrix_candidats:
+        # Create matrix of hashtags pairs
+        cr_arr = pair_hashtag_matrix()
+    if args.matrix_count:
+        plot_hashtag_matrix(cr_arr, hashtags,
+                            out_file=args.matrix_count)
+    if args.matrix_percent:
+        plot_hashtag_matrix(cr_arr, hashtags, percent=True,
+                            out_file=args.matrix_percent)
+    if args.matrix_candidats:
+        # If hashtags list change, update this
+        candidats = hashtags[2:9]
+        plot_hashtag_matrix(cr_arr, candidats, percent=True,
+                            out_file=args.matrix_candidats)
+    if args.interactive_matrix:
+        # show interactive plot
+        plt.show()
+
 
     #STANDARDOWE WYWOŁANIA
     # print(count_tweets())

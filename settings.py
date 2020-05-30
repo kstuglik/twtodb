@@ -9,5 +9,6 @@ hashtags = [
     'Trzaskowski2020',
     'Kosiniak2020',
     'WyboryKorespondencyjne',
-    'wybory2020'
+    'wybory2020',
+    'Wybory'
 ]
