@@ -136,6 +136,16 @@ def get_all_tweets_count():
     return d["count"]
 
 
+def tweets_per_user_count_only_if_hashtag(hashtag):
+    regex = re.compile("^" + hashtag + "$", re.IGNORECASE)
+    return collection.aggregate([{"$match": {"retweet": False, "hashtags": regex}},
+                                 {"$group": { "_id": "$tweet.user",
+                                              "count": {"$sum":1}}},
+                                 {"$sort":{"count": -1}}
+                                ])
+
+
 def user_list():
     mydict = users.find()
     return [v["user"]["id"] for v in mydict]
+

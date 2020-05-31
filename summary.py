@@ -10,6 +10,10 @@ import argparse
 import tqdm
 
 
+lista1 = list(tweets_per_user())
+lista2 = list(all_tweets_per_user())
+lista3 = list(retweets_per_user())
+
 def fix_hashtag_for_regex(h):
     if h == "Holownia2020":
         return "Holownia2020|Hołownia2020"
@@ -34,10 +38,6 @@ def get_user_count_from_list(lista,user_id):
 
 def get_summary_user_tweets_number(top_n):
 
-    lista1 = list(tweets_per_user())
-    lista2 = list(all_tweets_per_user())
-    lista3 = list(retweets_per_user())
-
     lista4 = [] # lista id najbardziej aktywnych użytkowników(z oryginalnymi tweetami)
 
     print("\n"+"UŻYTKOWNICY Z NAJWIEKSZA ILOSCIA ORYGINALNYCH TWEETOW".center(100,"=") + "\n")
@@ -58,8 +58,8 @@ def get_summary_user_tweets_number(top_n):
             user = get_user_by_id(item["_id"])
             print(
                 (user["user"]["name"]).ljust(40, " ")+
-                str(item["count"]).ljust(20, " ")+"\t"+
-                str(lista2_temp).ljust(20, " ")+"\t"+
+                str(item["count"]).ljust(20, " ")+
+                str(lista2_temp).ljust(20, " ")+
                 str(lista3_temp).ljust(20, " ")
             )
             counter -= 1
@@ -84,8 +84,8 @@ def get_summary_user_tweets_number(top_n):
                 user = get_user_by_id(item["_id"])
                 print(
                     (user["user"]["name"]).ljust(40, " ")+
-                    str(item["count"]).ljust(30, " ")+"\t"+
-                    str(count_from_lista2).ljust(20, " ")+"\t"+
+                    str(item["count"]).ljust(30, " ")+
+                    str(count_from_lista2).ljust(20, " ")+
                     str(count_from_lista1).ljust(20, " ")
                 )
 
@@ -241,7 +241,7 @@ def get_summary_advanced():
 
     for key, value in summary.items():
         print(
-        key.ljust(30, " ")+"\t"+
+        key.ljust(30, " ")+
         str(        value["all"]).ljust(10,         " ")    +"\t"+  
         str(round(  value["all"]/all_tweets*100,2))         +"\t"+
         str(        value["original"]).ljust(10," ")        +"\t"+  
@@ -260,7 +260,7 @@ def get_summary_advanced():
 
     for key, value in summary.items():
         print(
-        key.ljust(30, " ")+"\t"+
+        key.ljust(30, " ")+
         str(        value["all"]).ljust(10,         " ")    +"\t"+  
         str(        value["original"]).ljust(10," ")        +"\t"+  
         str(round(  value["original"] /value["all"]*100,2))+"\t"+
@@ -379,32 +379,42 @@ class ArgumentDefaultsAndConstHelpFormatter(argparse.HelpFormatter):
 
 
 def user_uses_most_selected_tag():
-    myDict = {}
-    ul = user_list()
 
-    for user_id in tqdm.cli.tqdm(ul, total=len(ul)):
-        myDict[user_id] = {}
-        l = get_tags_used_by_user(user_id)
-        suma = {} 
-        for group in l: 
-            for h in group["_id"]: 
-                h = h.lower() 
-                if h in suma: 
-                    suma[h] += group["count"] 
-                else: 
-                    suma[h] = group["count"] 
-        myDict[user_id] = suma    
- 
-    result_tags = { i.lower() : {"user_id":0,"sum":0} for i in hashtags }
+    result_tags = { i : {"_id":0,"count":0} for i in hashtags }
 
-    for user_id,user_val in myDict.items():
-        for key_tag, val_tag in user_val.items():
-            for k in result_tags.keys():
-                if key_tag.lower() == k:
-                    if int(val_tag) > int(result_tags[k]["sum"]):
-                        result_tags[k] = {"user_id":user_id,"sum":val_tag}
+    for hashtag in hashtags:
+        temp = tweets_per_user_count_only_if_hashtag(hashtag)
+        for item in temp:
 
-    pprint(result_tags)
+            if item["count"] > result_tags[hashtag]["count"]:
+                result_tags[hashtag] = {"_id":item["_id"],"count":item["count"]}
+
+
+    print("\n"+"UŻYTKOWNICY POSŁUGUJĄCY SIĘ NAJCZEŚCIEJ WYBRANYM TAGIEM".center(100,"=") + "\n")
+    for hashtag_key, hashtag_value in result_tags.items():
+        
+        print(hashtag_key.center(100,"*"))
+        print(
+            ("user_name").ljust(30, " ")+
+            ("orginal_tweets: ").ljust(20, " ")+
+            ("all_tweets:").ljust(20, " ")+
+            ("how_often_retweeted:").ljust(20, " ")
+        )
+
+
+        lista2_temp = get_user_count_from_list(lista2,hashtag_value["_id"])
+        lista3_temp = get_user_count_from_list(lista3,hashtag_value["_id"])
+
+        user = get_user_by_id(hashtag_value["_id"])
+
+        print(
+            (user["user"]["name"]).ljust(30, " ")+
+            str(hashtag_value["count"]).ljust(20, " ")+
+            str(lista2_temp).ljust(20, " ")+
+            str(lista3_temp).ljust(20, " ")
+        )
+  
+
 
 
 if __name__ == "__main__":
@@ -474,7 +484,6 @@ if __name__ == "__main__":
     if args.selected_tag:
         user_uses_most_selected_tag()
    
-
 
     #STANDARDOWE WYWOŁANIA
     # print(count_tweets())
