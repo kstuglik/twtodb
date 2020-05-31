@@ -399,9 +399,10 @@ def user_uses_most_selected_tag():
 
     for user_id,user_val in myDict.items():
         for key_tag, val_tag in user_val.items():
-            if key_tag.lower() in result_tags.keys():
-                if int(val_tag) > int(result_tags[key_tag.lower()]["sum"]):
-                    result_tags[key_tag.lower()] = {"user_id":user_id,"sum":val_tag}
+            for k in result_tags.keys():
+                if key_tag.lower() == k:
+                    if int(val_tag) > int(result_tags[k]["sum"]):
+                        result_tags[k] = {"user_id":user_id,"sum":val_tag}
 
     pprint(result_tags)
 
