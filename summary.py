@@ -7,6 +7,7 @@ import operator
 import matplotlib.pyplot as plt
 import matplotlib
 import argparse
+import tqdm
 
 
 def fix_hashtag_for_regex(h):
@@ -191,9 +192,9 @@ def get_summary_htags_by_day():
     return slownik_aktywnosci_dziennej
 
 
-def create_xls_summary_htags_by_day(output_file="test.csv"):
+def create_xls_summary_htags_by_day(output_file="output.csv"):
     slownik = get_summary_htags_by_day()
-    f = open(output_file, "a")
+    f = open(output_file, "w")
     f.write("DATE;")
     for htag in hashtags:
         f.write(htag+";")
@@ -377,6 +378,34 @@ class ArgumentDefaultsAndConstHelpFormatter(argparse.HelpFormatter):
         return help
 
 
+def user_uses_most_selected_tag():
+    myDict = {}
+    ul = user_list()
+
+    for user_id in tqdm.cli.tqdm(ul, total=len(ul)):
+        myDict[user_id] = {}
+        l = get_tags_used_by_user(user_id)
+        suma = {} 
+        for group in l: 
+            for h in group["_id"]: 
+                h = h.lower() 
+                if h in suma: 
+                    suma[h] += group["count"] 
+                else: 
+                    suma[h] = group["count"] 
+        myDict[user_id] = suma    
+ 
+    result_tags = { i.lower() : {"user_id":0,"sum":0} for i in hashtags }
+
+    for user_id,user_val in myDict.items():
+        for key_tag, val_tag in user_val.items():
+            if key_tag.lower() in result_tags.keys():
+                if int(val_tag) > int(result_tags[key_tag.lower()]["sum"]):
+                    result_tags[key_tag.lower()] = {"user_id":user_id,"sum":val_tag}
+
+    pprint(result_tags)
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
@@ -405,6 +434,8 @@ if __name__ == "__main__":
             help='Generate matrix plot of percent of tweets with hashtags pair compered to tweets of only one hashtag. Only candidats hashtag is used (Duda2020, Bosak2020, etc.). Resault saved to file.')
     parser.add_argument('-i', '--interactive-matrix', action='store_true',
             help='Show generated plots in interactive mode.')
+    parser.add_argument('-t', '--selected_tag', action='store_true',
+            help='User with the most part of uses tag')
 
     args = parser.parse_args()
 
@@ -438,6 +469,10 @@ if __name__ == "__main__":
     if args.interactive_matrix:
         # show interactive plot
         plt.show()
+
+    if args.selected_tag:
+        user_uses_most_selected_tag()
+   
 
 
     #STANDARDOWE WYWOŁANIA

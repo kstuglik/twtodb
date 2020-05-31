@@ -130,6 +130,12 @@ def get_all_users_count():
     d = users.aggregate([{"$group": {"_id": None, "count": {"$sum":1}}}]).next()
     return d["count"]
 
+
 def get_all_tweets_count():
     d = collection.aggregate([{"$group": {"_id": None, "count": {"$sum":1}}}]).next()
     return d["count"]
+
+
+def user_list():
+    mydict = users.find()
+    return [v["user"]["id"] for v in mydict]
