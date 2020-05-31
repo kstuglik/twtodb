@@ -145,7 +145,6 @@ def tweets_per_user_count_only_if_hashtag(hashtag):
                                 ])
 
 
-def user_list():
+def get_user_id_from_name(screen_name):
     mydict = users.find()
-    return [v["user"]["id"] for v in mydict]
-
+    return [v["user"]["id"] for v in mydict if v["user"]["screen_name"]==screen_name]

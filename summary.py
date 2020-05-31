@@ -383,7 +383,7 @@ def user_uses_most_selected_tag():
     result_tags = { i : {"_id":0,"count":0} for i in hashtags }
 
     for hashtag in hashtags:
-        temp = tweets_per_user_count_only_if_hashtag(hashtag)
+        temp = tweets_per_user_count_only_if_hashtag(fix_hashtag_for_regex(hashtag))
         for item in temp:
 
             if item["count"] > result_tags[hashtag]["count"]:
@@ -415,6 +415,43 @@ def user_uses_most_selected_tag():
         )
   
 
+def check_candidates():
+
+    kandydaci = {
+    "AndrzejDuda":0,
+    "trzaskowski_":0,
+    "szymon_holownia":0,
+    "RobertBiedron":0,
+    "KosiniakKamysz":0,
+    "BosakKrzysztof":0,
+    "M_K_Blonska":0
+    }
+
+    for k_key,k_val in kandydaci.items():
+        kandydaci[k_key] = get_user_id_from_name(k_key)[0]
+  
+    # pprint(kandydaci)
+    print("\n"+"UŻYTKOWNICY POSŁUGUJĄCY SIĘ NAJCZEŚCIEJ WYBRANYM TAGIEM".center(100,"=") + "\n")
+    print(
+    ("user_name").ljust(30, " ")+
+    ("orginal_tweets: ").ljust(20, " ")+
+    ("all_tweets:").ljust(20, " ")+
+    ("how_often_retweeted:").ljust(20, " ")+"\n"
+    )
+    for key,value in kandydaci.items():
+ 
+        lista1_temp = get_user_count_from_list(lista1,value)
+        lista2_temp = get_user_count_from_list(lista2,value)
+        lista3_temp = get_user_count_from_list(lista3,value)
+
+        user = get_user_by_id(value)
+
+        print(
+            (key).ljust(30, " ")+
+            str(lista1_temp).ljust(20, " ")+
+            str(lista2_temp).ljust(20, " ")+
+            str(lista3_temp).ljust(20, " ")
+        )
 
 
 if __name__ == "__main__":
@@ -447,6 +484,8 @@ if __name__ == "__main__":
             help='Show generated plots in interactive mode.')
     parser.add_argument('-t', '--selected_tag', action='store_true',
             help='User with the most part of uses tag')
+    parser.add_argument('-k', '--candidates', action='store_true',
+            help='Activity of candidates')
 
     args = parser.parse_args()
 
@@ -484,6 +523,10 @@ if __name__ == "__main__":
     if args.selected_tag:
         user_uses_most_selected_tag()
    
+    if args.candidates:
+        check_candidates()
+
+
 
     #STANDARDOWE WYWOŁANIA
     # print(count_tweets())
