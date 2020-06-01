@@ -379,40 +379,38 @@ class ArgumentDefaultsAndConstHelpFormatter(argparse.HelpFormatter):
 
 
 def user_uses_most_selected_tag():
+    top_users = 3
 
-    result_tags = { i : {"_id":0,"count":0} for i in hashtags }
+    result_tags = { i : [{"_id":0,"count":0}] * top_users for i in hashtags }
 
     for hashtag in hashtags:
         temp = tweets_per_user_count_only_if_hashtag(fix_hashtag_for_regex(hashtag))
-        for item in temp:
-
-            if item["count"] > result_tags[hashtag]["count"]:
-                result_tags[hashtag] = {"_id":item["_id"],"count":item["count"]}
-
+        for i in range(top_users):
+            item = temp.next()
+            result_tags[hashtag][i] = {"_id":item["_id"],"count":item["count"]}
 
     print("\n"+"UŻYTKOWNICY POSŁUGUJĄCY SIĘ NAJCZEŚCIEJ WYBRANYM TAGIEM".center(100,"=") + "\n")
-    for hashtag_key, hashtag_value in result_tags.items():
-        
+    for hashtag_key, hashtag_list in result_tags.items():
         print(hashtag_key.center(100,"*"))
         print(
             ("user_name").ljust(30, " ")+
-            ("orginal_tweets: ").ljust(20, " ")+
+            ("tweets_with_#tag: ").ljust(20, " ")+
             ("all_tweets:").ljust(20, " ")+
             ("how_often_retweeted:").ljust(20, " ")
         )
 
+        for hashtag_value in hashtag_list:
+            lista2_temp = get_user_count_from_list(lista2,hashtag_value["_id"])
+            lista3_temp = get_user_count_from_list(lista3,hashtag_value["_id"])
 
-        lista2_temp = get_user_count_from_list(lista2,hashtag_value["_id"])
-        lista3_temp = get_user_count_from_list(lista3,hashtag_value["_id"])
+            user = get_user_by_id(hashtag_value["_id"])
 
-        user = get_user_by_id(hashtag_value["_id"])
-
-        print(
-            (user["user"]["name"]).ljust(30, " ")+
-            str(hashtag_value["count"]).ljust(20, " ")+
-            str(lista2_temp).ljust(20, " ")+
-            str(lista3_temp).ljust(20, " ")
-        )
+            print(
+                (user["user"]["name"]).ljust(30, " ")+
+                str(hashtag_value["count"]).ljust(20, " ")+
+                str(lista2_temp).ljust(20, " ")+
+                str(lista3_temp).ljust(20, " ")
+            )
   
 
 def check_candidates():
